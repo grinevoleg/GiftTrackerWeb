@@ -1,4 +1,4 @@
-// GiftTracker Web App - Single File JavaScript
+// GiftTracker Web App
 (function() {
     'use strict';
 
@@ -34,19 +34,19 @@
         
         loadDemo() {
             this.people = [
-                {id: '1', name: 'Мама', birthday: '1975-03-15', relationship: 'Родственник', notes: 'Любит цветы'},
-                {id: '2', name: 'Папа', birthday: '1970-07-22', relationship: 'Родственник', notes: 'Увлекается рыбалкой'},
-                {id: '3', name: 'Анна', birthday: '1995-11-08', relationship: 'Друг', notes: 'Любит книги'},
-                {id: '4', name: 'Дима', birthday: '1992-01-30', relationship: 'Коллега', notes: 'Геймер'}
+                {id: '1', name: '\u041c\u0430\u043c\u0430', birthday: '1975-03-15', relationship: '\u0420\u043e\u0434\u0441\u0442\u0432\u0435\u043d\u043d\u0438\u043a', notes: '\u041b\u044e\u0431\u0438\u0442 \u0446\u0432\u0435\u0442\u044b'},
+                {id: '2', name: '\u041f\u0430\u043f\u0430', birthday: '1970-07-22', relationship: '\u0420\u043e\u0434\u0441\u0442\u0432\u0435\u043d\u043d\u0438\u043a', notes: '\u0423\u0432\u043b\u0435\u043a\u0430\u0435\u0442\u0441\u044f \u0440\u044b\u0431\u0430\u043b\u043a\u043e\u0439'},
+                {id: '3', name: '\u0410\u043d\u043d\u0430', birthday: '1995-11-08', relationship: '\u0414\u0440\u0443\u0433', notes: '\u041b\u044e\u0431\u0438\u0442 \u043a\u043d\u0438\u0433\u0438'},
+                {id: '4', name: '\u0414\u0438\u043c\u0430', birthday: '1992-01-30', relationship: '\u041a\u043e\u043b\u043b\u0435\u0433\u0430', notes: '\u0413\u0435\u0439\u043c\u0435\u0440'}
             ];
             this.events = [
-                {id: '1', title: 'День рождения Мамы', date: '2026-03-15', type: 'birthday', budget: 100, personId: '1'},
-                {id: '2', title: 'Новый год', date: '2026-12-31', type: 'holiday', budget: 200},
-                {id: '3', title: '8 марта', date: '2026-03-08', type: 'holiday', budget: 150}
+                {id: '1', title: '\u0414\u0435\u043d\u044c \u0440\u043e\u0436\u0434\u0435\u043d\u0438\u044f \u041c\u0430\u043c\u044b', date: '2026-03-15', type: 'birthday', budget: 100, personId: '1'},
+                {id: '2', title: '\u041d\u043e\u0432\u044b\u0439 \u0433\u043e\u0434', date: '2026-12-31', type: 'holiday', budget: 200},
+                {id: '3', title: '8 \u043c\u0430\u0440\u0442\u0430', date: '2026-03-08', type: 'holiday', budget: 150}
             ];
             this.gifts = [
-                {id: '1', name: 'Букет цветов', price: 50, status: 'planned', eventId: '1', store: 'Цветочный'},
-                {id: '2', name: 'Парфюм', price: 80, status: 'bought', eventId: '1', store: 'Летуаль'}
+                {id: '1', name: '\u0411\u0443\u043a\u0435\u0442 \u0446\u0432\u0435\u0442\u043e\u0432', price: 50, status: 'planned', eventId: '1', store: '\u0426\u0432\u0435\u0442\u043e\u0447\u043d\u044b\u0439'},
+                {id: '2', name: '\u041f\u0430\u0440\u0444\u044e\u043c', price: 80, status: 'bought', eventId: '1', store: '\u041b\u0435\u0442\u0443\u0430\u043b\u044c'}
             ];
             this.save();
         },
@@ -76,7 +76,7 @@
                 const next = new Date(now.getFullYear(), bday.getMonth(), bday.getDate());
                 if (next < now) next.setFullYear(now.getFullYear() + 1);
                 const diff = Math.ceil((next - now) / (1000 * 60 * 60 * 24));
-                return {...p, daysUntil: diff};
+                return Object.assign({}, p, {daysUntil: diff});
             }).filter(p => p.daysUntil >= 0 && p.daysUntil <= days).sort((a, b) => a.daysUntil - b.daysUntil);
         },
         
@@ -85,7 +85,7 @@
             return this.events.map(e => {
                 const d = new Date(e.date);
                 const diff = Math.ceil((d - now) / (1000 * 60 * 60 * 24));
-                return {...e, daysUntil: diff};
+                return Object.assign({}, e, {daysUntil: diff});
             }).filter(e => e.daysUntil >= 0 && e.daysUntil <= days).sort((a, b) => a.daysUntil - b.daysUntil);
         },
         
@@ -100,141 +100,149 @@
         }
     };
 
-    // UI Helpers
-    const icons = {
-        birthday: '🎂', anniversary: '❤️', holiday: '⭐', other: '🎁',
-        planned: '○', bought: '✓', wrapped: '🎁', given: '✔️'
-    };
-    
-    const colors = {
-        birthday: '#FF4D80', anniversary: '#FF3B30', holiday: '#FF9500', other: '#007AFF',
-        planned: '#8E8E93', bought: '#007AFF', wrapped: '#FF9500', given: '#34C759'
-    };
+    // Icons and colors
+    const icons = {birthday: '\ud83c\udf82', anniversary: '\u2764\ufe0f', holiday: '\u2b50', other: '\ud83c\udf81'};
+    const colors = {birthday: '#FF4D80', anniversary: '#FF3B30', holiday: '#FF9500', other: '#007AFF'};
 
+    // Current state
     let currentTab = 'dashboard';
-    let currentView = 'dashboard';
 
-    // Initialize
-    window.addEventListener('DOMContentLoaded', () => {
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('GiftTracker initializing...');
         store.load();
-        setTimeout(() => {
-            document.getElementById('splash').classList.add('hidden');
+        
+        // Hide splash after delay
+        setTimeout(function() {
+            var splash = document.getElementById('splash');
+            if (splash) {
+                splash.classList.add('hidden');
+                setTimeout(function() {
+                    splash.style.display = 'none';
+                }, 500);
+            }
             renderDashboard();
         }, 1500);
     });
 
-    // Tab Switching
+    // Tab switching
     window.switchTab = function(tab) {
         currentTab = tab;
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        var tabs = document.querySelectorAll('.tab');
+        for (var i = 0; i < tabs.length; i++) {
+            tabs[i].classList.remove('active');
+        }
         event.target.closest('.tab').classList.add('active');
         
-        switch(tab) {
-            case 'dashboard': renderDashboard(); break;
-            case 'people': renderPeople(); break;
-            case 'events': renderEvents(); break;
-            case 'stats': renderStats(); break;
-        }
+        if (tab === 'dashboard') renderDashboard();
+        else if (tab === 'people') renderPeople();
+        else if (tab === 'events') renderEvents();
+        else if (tab === 'stats') renderStats();
     };
 
-    // Render Functions
+    // Render Dashboard
     function renderDashboard() {
-        const stats = store.getStats();
-        const birthdays = store.getUpcomingBirthdays();
-        const events = store.getUpcomingEvents();
+        console.log('Rendering dashboard...');
+        var stats = store.getStats();
+        var birthdays = store.getUpcomingBirthdays();
+        var events = store.getUpcomingEvents();
         
-        let html = '<div class="p-20">';
+        var html = '<div style="padding:20px 16px">';
         
         // Welcome
-        html += '<div class="mb-20">';
-        html += '<div class="font-b" style="font-size:28px;margin-bottom:4px">Привет! 🎉</div>';
-        html += '<div class="text-s">Вот что происходит сейчас</div>';
+        html += '<div style="margin-bottom:24px">';
+        html += '<div style="font-size:28px;font-weight:700;margin-bottom:4px">\u041f\u0440\u0438\u0432\u0435\u0442! \ud83c\udf89</div>';
+        html += '<div style="color:var(--ios-label2)">\u0412\u043e\u0442 \u0447\u0442\u043e \u043f\u0440\u043e\u0438\u0441\u0445\u043e\u0434\u0438\u0442 \u0441\u0435\u0439\u0447\u0430\u0441</div>';
         html += '</div>';
         
         // Birthdays
         if (birthdays.length > 0) {
-            html += '<div class="mb-20">';
-            html += '<div class="font-sb" style="font-size:20px;margin-bottom:12px">🎂 Ближайшие дни рождения</div>';
+            html += '<div style="margin-bottom:24px">';
+            html += '<div style="font-size:20px;font-weight:600;margin-bottom:12px">\ud83c\udf82 \u0411\u043b\u0438\u0436\u0430\u0439\u0448\u0438\u0435 \u0434\u043d\u0438 \u0440\u043e\u0436\u0434\u0435\u043d\u0438\u044f</div>';
             html += '<div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:8px">';
-            birthdays.slice(0, 5).forEach(p => {
-                html += `<div class="card" style="min-width:160px;margin:0;cursor:pointer" onclick="renderPersonDetail('${p.id}')">`;
-                html += '<div class="p-16">';
+            for (var i = 0; i < Math.min(birthdays.length, 5); i++) {
+                var p = birthdays[i];
+                html += '<div class="card" style="min-width:160px;margin:0;cursor:pointer" onclick="renderPersonDetail(\'' + p.id + '\')">';
+                html += '<div style="padding:16px">';
                 html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">';
-                html += '<span style="font-size:32px">👤</span>';
-                html += `<span class="badge">${p.daysUntil === 0 ? 'Сегодня!' : p.daysUntil + ' дн.'}</span>`;
+                html += '<span style="font-size:32px">\ud83d\udc64</span>';
+                html += '<span class="badge">' + (p.daysUntil === 0 ? '\u0421\u0435\u0433\u043e\u0434\u043d\u044f!' : p.daysUntil + ' \u0434\u043d.') + '</span>';
                 html += '</div>';
-                html += `<div class="font-sb">${p.name}</div>`;
+                html += '<div style="font-weight:600;font-size:15px">' + p.name + '</div>';
                 html += '</div></div>';
-            });
+            }
             html += '</div></div>';
         }
         
         // Events
         if (events.length > 0) {
-            html += '<div class="mb-20">';
-            html += '<div class="font-sb" style="font-size:20px;margin-bottom:12px">🎁 Ближайшие события</div>';
-            events.slice(0, 5).forEach(e => {
-                html += `<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="renderEventDetail('${e.id}')">`;
+            html += '<div style="margin-bottom:24px">';
+            html += '<div style="font-size:20px;font-weight:600;margin-bottom:12px">\ud83c\udf81 \u0411\u043b\u0438\u0436\u0430\u0439\u0448\u0438\u0435 \u0441\u043e\u0431\u044b\u0442\u0438\u044f</div>';
+            for (var j = 0; j < Math.min(events.length, 5); j++) {
+                var e = events[j];
+                html += '<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="renderEventDetail(\'' + e.id + '\')">';
                 html += '<div class="card-r">';
-                html += `<div class="card-i" style="background:${colors[e.type] || colors.other}15;color:${colors[e.type] || colors.other}">${icons[e.type] || icons.other}</div>`;
+                html += '<div class="card-i" style="background:' + (colors[e.type] || colors.other) + '15;color:' + (colors[e.type] || colors.other) + '">' + (icons[e.type] || icons.other) + '</div>';
                 html += '<div class="card-c">';
-                html += `<div class="card-t">${e.title}</div>`;
-                html += `<div class="card-s">${new Date(e.date).toLocaleDateString('ru-RU')} · ${e.daysUntil} дн.</div>`;
+                html += '<div class="card-t">' + e.title + '</div>';
+                html += '<div class="card-s">' + new Date(e.date).toLocaleDateString('ru-RU') + ' \u00b7 ' + e.daysUntil + ' \u0434\u043d.</div>';
                 html += '</div>';
-                if (e.budget > 0) html += `<div style="color:var(--ios-label2)">${e.budget} $</div>`;
+                if (e.budget > 0) html += '<div style="color:var(--ios-label2)">' + e.budget + ' $</div>';
                 html += '</div></div>';
-            });
+            }
             html += '</div>';
         }
         
         // Quick Actions
-        html += '<div class="mb-20">';
-        html += '<div class="font-sb" style="font-size:20px;margin-bottom:12px">⚡ Быстрые действия</div>';
-        html += '<div class="row">';
-        html += '<button class="btn btn2" onclick="renderAddPerson()">👤 Добавить</button>';
-        html += '<button class="btn btn2" onclick="renderAddEvent()">📅 Событие</button>';
+        html += '<div style="margin-bottom:24px">';
+        html += '<div style="font-size:20px;font-weight:600;margin-bottom:12px">\u26a1 \u0411\u044b\u0441\u0442\u0440\u044b\u0435 \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044f</div>';
+        html += '<div style="display:flex;gap:12px;padding:0 16px">';
+        html += '<button class="btn btn2" onclick="renderAddPerson()">\ud83d\udc64 \u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c</button>';
+        html += '<button class="btn btn2" onclick="renderAddEvent()">\ud83d\udcc5 \u0421\u043e\u0431\u044b\u0442\u0438\u0435</button>';
         html += '</div></div>';
         
         // Stats
         html += '<div>';
-        html += '<div class="font-sb" style="font-size:20px;margin-bottom:12px">📊 Статистика</div>';
-        html += '<div class="row">';
-        html += `<div class="card col"><div class="p-16"><div class="text-s" style="font-size:13px">Бюджет</div><div class="font-b" style="font-size:24px;color:var(--ios-blue)">${stats.totalBudget} $</div></div></div>`;
-        html += `<div class="card col"><div class="p-16"><div class="text-s" style="font-size:13px">Потрачено</div><div class="font-b" style="font-size:24px;color:var(--ios-green)">${stats.totalSpent} $</div></div></div>`;
+        html += '<div style="font-size:20px;font-weight:600;margin-bottom:12px">\ud83d\udcca \u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043a\u0430</div>';
+        html += '<div style="display:flex;gap:12px;padding:0 16px">';
+        html += '<div class="card" style="flex:1;margin:0"><div style="padding:16px"><div style="color:var(--ios-label2);font-size:13px;margin-bottom:4px">\u0411\u044e\u0434\u0436\u0435\u0442</div><div style="font-size:24px;font-weight:700;color:var(--ios-blue)">' + stats.totalBudget + ' $</div></div></div>';
+        html += '<div class="card" style="flex:1;margin:0"><div style="padding:16px"><div style="color:var(--ios-label2);font-size:13px;margin-bottom:4px">\u041f\u043e\u0442\u0440\u0430\u0447\u0435\u043d\u043e</div><div style="font-size:24px;font-weight:700;color:var(--ios-green)">' + stats.totalSpent + ' $</div></div></div>';
         html += '</div></div>';
         
         html += '</div>';
         document.getElementById('content').innerHTML = html;
+        console.log('Dashboard rendered');
     }
 
+    // Render People
     window.renderPeople = function() {
-        let html = '<div class="content">';
+        var html = '<div class="content">';
         
-        // Search
-        html += '<div class="search"><div class="search-i"><span>🔍</span><input type="text" placeholder="Поиск" oninput="filterPeople(this.value)"></div></div>';
+        html += '<div class="search"><div class="search-i"><span>\ud83d\udd0d</span><input type="text" placeholder="\u041f\u043e\u0438\u0441\u043a" oninput="filterPeople(this.value)"></div></div>';
         
         if (store.people.length > 0) {
             html += '<div id="people-list">';
-            store.people.forEach(p => {
-                const age = p.birthday ? new Date().getFullYear() - new Date(p.birthday).getFullYear() : null;
-                html += `<div class="card" style="margin-bottom:1px;cursor:pointer" onclick="renderPersonDetail('${p.id}')">`;
+            for (var i = 0; i < store.people.length; i++) {
+                var p = store.people[i];
+                var age = p.birthday ? new Date().getFullYear() - new Date(p.birthday).getFullYear() : null;
+                html += '<div class="card" style="margin-bottom:1px;cursor:pointer" onclick="renderPersonDetail(\'' + p.id + '\')">';
                 html += '<div class="card-r">';
-                html += '<div class="card-i" style="background:#FF4D8015;color:#FF4D80;font-size:24px">👤</div>';
+                html += '<div class="card-i" style="background:#FF4D8015;color:#FF4D80;font-size:24px">\ud83d\udc64</div>';
                 html += '<div class="card-c">';
-                html += `<div class="card-t">${p.name}</div>`;
-                if (p.relationship) html += `<div class="card-s">${p.relationship}</div>`;
+                html += '<div class="card-t">' + p.name + '</div>';
+                if (p.relationship) html += '<div class="card-s">' + p.relationship + '</div>';
                 html += '</div>';
-                if (age) html += `<div class="text-s">${age} лет</div>`;
-                html += '<div class="text-s">&rsaquo;</div>';
+                if (age) html += '<div style="color:var(--ios-label2)">' + age + ' \u043b\u0435\u0442</div>';
+                html += '<div style="color:var(--ios-label2)">&rsaquo;</div>';
                 html += '</div></div>';
-            });
+            }
             html += '</div>';
         } else {
             html += '<div class="empty">';
-            html += '<div class="empty-i">👤</div>';
-            html += '<div class="empty-t">Нет людей</div>';
-            html += '<div class="empty-s">Добавьте близких</div>';
-            html += '<button class="btn" style="margin-top:16px" onclick="renderAddPerson()">Добавить</button>';
+            html += '<div class="empty-i">\ud83d\udc64</div>';
+            html += '<div class="empty-t">\u041d\u0435\u0442 \u043b\u044e\u0434\u0435\u0439</div>';
+            html += '<div class="empty-s">\u0414\u043e\u0431\u0430\u0432\u044c\u0442\u0435 \u0431\u043b\u0438\u0437\u043a\u0438\u0445</div>';
+            html += '<button class="btn" style="margin-top:16px" onclick="renderAddPerson()">\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c</button>';
             html += '</div>';
         }
         
@@ -243,73 +251,73 @@
     };
 
     window.filterPeople = function(query) {
-        const items = document.querySelectorAll('#people-list > div');
-        items.forEach(item => {
-            item.style.display = item.textContent.toLowerCase().includes(query.toLowerCase()) ? '' : 'none';
-        });
+        var items = document.querySelectorAll('#people-list > div');
+        for (var i = 0; i < items.length; i++) {
+            items[i].style.display = items[i].textContent.toLowerCase().indexOf(query.toLowerCase()) >= 0 ? '' : 'none';
+        }
     };
 
     window.renderPersonDetail = function(id) {
-        const p = store.people.find(x => x.id === id);
+        var p = store.people.find(function(x) { return x.id === id; });
         if (!p) return renderPeople();
         
-        const age = p.birthday ? new Date().getFullYear() - new Date(p.birthday).getFullYear() : null;
+        var age = p.birthday ? new Date().getFullYear() - new Date(p.birthday).getFullYear() : null;
         
-        let html = '<div class="content">';
+        var html = '<div class="content">';
         html += '<div style="text-align:center;padding:32px 16px">';
-        html += '<div style="font-size:80px;margin-bottom:12px">👤</div>';
-        html += `<div class="font-b" style="font-size:24px;margin-bottom:4px">${p.name}</div>`;
-        if (p.relationship) html += `<div class="text-s">${p.relationship}</div>`;
+        html += '<div style="font-size:80px;margin-bottom:12px">\ud83d\udc64</div>';
+        html += '<div style="font-size:24px;font-weight:700;margin-bottom:4px">' + p.name + '</div>';
+        if (p.relationship) html += '<div style="color:var(--ios-label2)">' + p.relationship + '</div>';
         html += '</div>';
         
         html += '<div class="card" style="margin-bottom:16px">';
         if (p.birthday) {
-            html += '<div class="card-r"><span style="font-size:20px">🎂</span><div class="card-c"><div class="card-t">День рождения</div><div class="card-s">' + new Date(p.birthday).toLocaleDateString('ru-RU') + '</div></div></div>';
+            html += '<div class="card-r"><span style="font-size:20px">\ud83c\udf82</span><div class="card-c"><div class="card-t">\u0414\u0435\u043d\u044c \u0440\u043e\u0436\u0434\u0435\u043d\u0438\u044f</div><div class="card-s">' + new Date(p.birthday).toLocaleDateString('ru-RU') + '</div></div></div>';
         }
         if (age) {
-            html += `<div class="card-r"><span style="font-size:20px">📱</span><div class="card-c"><div class="card-t">Возраст</div><div class="card-s">${age} лет</div></div></div>`;
+            html += '<div class="card-r"><span style="font-size:20px">\ud83d\udcf1</span><div class="card-c"><div class="card-t">\u0412\u043e\u0437\u0440\u0430\u0441\u0442</div><div class="card-s">' + age + ' \u043b\u0435\u0442</div></div></div>';
         }
         if (p.notes) {
-            html += `<div class="card-r"><span style="font-size:20px">📝</span><div class="card-c"><div class="card-t">Заметки</div><div class="card-s">${p.notes}</div></div></div>`;
+            html += '<div class="card-r"><span style="font-size:20px">\ud83d\udcdd</span><div class="card-c"><div class="card-t">\u0417\u0430\u043c\u0435\u0442\u043a\u0438</div><div class="card-s">' + p.notes + '</div></div></div>';
         }
         html += '</div>';
         
-        html += '<button class="btn" onclick="renderAddEvent()">Добавить событие</button>';
+        html += '<button class="btn" onclick="renderAddEvent()">\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u0441\u043e\u0431\u044b\u0442\u0438\u0435</button>';
         html += '</div>';
         document.getElementById('content').innerHTML = html;
     };
 
     window.renderEvents = function() {
-        let html = '<div class="content">';
+        var html = '<div class="content">';
         
-        // Filters
         html += '<div style="display:flex;gap:8px;padding:12px 16px;overflow-x:auto">';
-        html += '<span class="badge">Все</span>';
-        html += '<span class="badge" style="background:var(--ios-fill);color:var(--ios-label2)">Ближайшие</span>';
-        html += '<span class="badge" style="background:var(--ios-fill);color:var(--ios-label2)">Дни рождения</span>';
+        html += '<span class="badge">\u0412\u0441\u0435</span>';
+        html += '<span class="badge" style="background:var(--ios-fill);color:var(--ios-label2)">\u0411\u043b\u0438\u0436\u0430\u0439\u0448\u0438\u0435</span>';
+        html += '<span class="badge" style="background:var(--ios-fill);color:var(--ios-label2)">\u0414\u043d\u0438 \u0440\u043e\u0436\u0434\u0435\u043d\u0438\u044f</span>';
         html += '</div>';
         
         if (store.events.length > 0) {
-            store.events.forEach(e => {
-                const d = new Date(e.date);
-                const now = new Date();
-                const diff = Math.ceil((d - now) / (1000 * 60 * 60 * 24));
-                html += `<div class="card" style="margin-bottom:1px;cursor:pointer" onclick="renderEventDetail('${e.id}')">`;
+            for (var i = 0; i < store.events.length; i++) {
+                var e = store.events[i];
+                var d = new Date(e.date);
+                var now = new Date();
+                var diff = Math.ceil((d - now) / (1000 * 60 * 60 * 24));
+                html += '<div class="card" style="margin-bottom:1px;cursor:pointer" onclick="renderEventDetail(\'' + e.id + '\')">';
                 html += '<div class="card-r">';
-                html += `<div class="card-i" style="background:${colors[e.type]}15;color:${colors[e.type]}">${icons[e.type]}</div>`;
+                html += '<div class="card-i" style="background:' + (colors[e.type] || colors.other) + '15;color:' + (colors[e.type] || colors.other) + '">' + (icons[e.type] || icons.other) + '</div>';
                 html += '<div class="card-c">';
-                html += `<div class="card-t">${e.title}</div>`;
-                html += `<div class="card-s">${d.toLocaleDateString('ru-RU')} ${diff >= 0 ? '· ' + diff + ' дн.' : ''}</div>`;
+                html += '<div class="card-t">' + e.title + '</div>';
+                html += '<div class="card-s">' + d.toLocaleDateString('ru-RU') + ' ' + (diff >= 0 ? '\u00b7 ' + diff + ' \u0434\u043d.' : '') + '</div>';
                 html += '</div>';
-                if (e.budget > 0) html += `<div class="text-s">${e.budget} $</div>`;
-                html += '<div class="text-s">&rsaquo;</div>';
+                if (e.budget > 0) html += '<div style="color:var(--ios-label2)">' + e.budget + ' $</div>';
+                html += '<div style="color:var(--ios-label2)">&rsaquo;</div>';
                 html += '</div></div>';
-            });
+            }
         } else {
             html += '<div class="empty">';
-            html += '<div class="empty-i">📅</div>';
-            html += '<div class="empty-t">Нет событий</div>';
-            html += '<button class="btn" style="margin-top:16px" onclick="renderAddEvent()">Добавить</button>';
+            html += '<div class="empty-i">\ud83d\udcc5</div>';
+            html += '<div class="empty-t">\u041d\u0435\u0442 \u0441\u043e\u0431\u044b\u0442\u0438\u0439</div>';
+            html += '<button class="btn" style="margin-top:16px" onclick="renderAddEvent()">\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c</button>';
             html += '</div>';
         }
         
@@ -318,53 +326,54 @@
     };
 
     window.renderEventDetail = function(id) {
-        const e = store.events.find(x => x.id === id);
+        var e = store.events.find(function(x) { return x.id === id; });
         if (!e) return renderEvents();
         
-        const gifts = store.getGiftsForEvent(id);
-        const spent = gifts.reduce((s, g) => s + (parseFloat(g.price) || 0), 0);
-        const remaining = (parseFloat(e.budget) || 0) - spent;
+        var gifts = store.getGiftsForEvent(id);
+        var spent = gifts.reduce(function(s, g) { return s + (parseFloat(g.price) || 0); }, 0);
+        var remaining = (parseFloat(e.budget) || 0) - spent;
         
-        let html = '<div class="content">';
+        var html = '<div class="content">';
         html += '<div style="text-align:center;padding:32px 16px">';
-        html += `<div style="font-size:60px;margin-bottom:12px">${icons[e.type]}</div>`;
-        html += `<div class="font-b" style="font-size:24px;margin-bottom:4px">${e.title}</div>`;
-        html += `<div class="text-s">${new Date(e.date).toLocaleDateString('ru-RU')}</div>`;
+        html += '<div style="font-size:60px;margin-bottom:12px">' + (icons[e.type] || icons.other) + '</div>';
+        html += '<div style="font-size:24px;font-weight:700;margin-bottom:4px">' + e.title + '</div>';
+        html += '<div style="color:var(--ios-label2)">' + new Date(e.date).toLocaleDateString('ru-RU') + '</div>';
         html += '</div>';
         
         if (e.budget > 0) {
             html += '<div class="card" style="margin-bottom:16px">';
-            html += '<div class="p-16">';
+            html += '<div style="padding:16px">';
             html += '<div style="display:flex;justify-content:space-between;margin-bottom:12px">';
-            html += `<div><div class="text-s" style="font-size:13px">Бюджет</div><div class="font-b" style="font-size:20px">${e.budget} $</div></div>`;
-            html += `<div style="text-align:right"><div class="text-s" style="font-size:13px">Потрачено</div><div class="font-b" style="font-size:20px;color:${remaining >= 0 ? 'var(--ios-green)' : 'var(--ios-red)'}">${spent} $</div></div>`;
+            html += '<div><div style="color:var(--ios-label2);font-size:13px">\u0411\u044e\u0434\u0436\u0435\u0442</div><div style="font-size:20px;font-weight:700">' + e.budget + ' $</div></div>';
+            html += '<div style="text-align:right"><div style="color:var(--ios-label2);font-size:13px">\u041f\u043e\u0442\u0440\u0430\u0447\u0435\u043d\u043e</div><div style="font-size:20px;font-weight:700;color:' + (remaining >= 0 ? '#34C759' : '#FF3B30') + '">' + spent + ' $</div></div>';
             html += '</div>';
-            html += `<div class="progress"><div class="progress-f" style="width:${Math.min((spent/e.budget)*100,100)}%;background:${remaining >= 0 ? 'var(--ios-green)' : 'var(--ios-red)'}"></div></div>`;
+            html += '<div class="progress"><div class="progress-f" style="width:' + Math.min((spent / e.budget) * 100, 100) + '%;background:' + (remaining >= 0 ? '#34C759' : '#FF3B30') + '"></div></div>';
             html += '</div></div>';
         }
         
         html += '<div style="margin-bottom:16px">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:0 16px;margin-bottom:12px">';
-        html += '<div class="font-sb" style="font-size:20px">🎁 Подарки</div>';
-        html += `<button style="background:none;border:none;color:var(--ios-blue);font-size:15px;cursor:pointer" onclick="showAddGift('${e.id}')">+ Добавить</button>`;
+        html += '<div style="font-size:20px;font-weight:600">\ud83c\udf81 \u041f\u043e\u0434\u0430\u0440\u043a\u0438</div>';
+        html += '<button style="background:none;border:none;color:var(--ios-blue);font-size:15px;cursor:pointer" onclick="showAddGift(\'' + e.id + '\')">+ \u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c</button>';
         html += '</div>';
         
         if (gifts.length > 0) {
-            gifts.forEach(g => {
+            for (var i = 0; i < gifts.length; i++) {
+                var g = gifts[i];
                 html += '<div class="card" style="margin-bottom:1px">';
                 html += '<div class="card-r">';
-                html += `<div class="card-i" style="background:${colors[g.status]}15;color:${colors[g.status]}">${icons[g.status]}</div>`;
+                html += '<div class="card-i" style="background:' + (colors[g.status] || '#8E8E93') + '15;color:' + (colors[g.status] || '#8E8E93') + '">' + (icons[g.status] || '\u25cb') + '</div>';
                 html += '<div class="card-c">';
-                html += `<div class="card-t">${g.name}</div>`;
-                html += `<div class="card-s">${g.store || ''} · ${g.status}</div>`;
+                html += '<div class="card-t">' + g.name + '</div>';
+                html += '<div class="card-s">' + (g.store || '') + ' \u00b7 ' + g.status + '</div>';
                 html += '</div>';
-                if (g.price > 0) html += `<div class="text-s">${g.price} $</div>`;
+                if (g.price > 0) html += '<div style="color:var(--ios-label2)">' + g.price + ' $</div>';
                 html += '</div></div>';
-            });
+            }
         } else {
             html += '<div class="empty" style="padding:32px">';
-            html += '<div class="empty-i" style="font-size:48px">🎁</div>';
-            html += '<div class="empty-s">Нет подарков</div>';
+            html += '<div class="empty-i" style="font-size:48px">\ud83c\udf81</div>';
+            html += '<div style="color:var(--ios-label2)">\u041d\u0435\u0442 \u043f\u043e\u0434\u0430\u0440\u043a\u043e\u0432</div>';
             html += '</div>';
         }
         
@@ -373,33 +382,33 @@
     };
 
     window.renderStats = function() {
-        const stats = store.getStats();
+        var stats = store.getStats();
         
-        let html = '<div class="content"><div class="p-20">';
-        html += '<div class="font-b" style="font-size:28px;margin-bottom:20px">Статистика</div>';
+        var html = '<div class="content"><div style="padding:20px 16px">';
+        html += '<div style="font-size:28px;font-weight:700;margin-bottom:20px">\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043a\u0430</div>';
         
-        html += '<div class="row mb-20">';
-        html += `<div class="card col"><div class="p-16"><div class="text-s" style="font-size:13px">Бюджет</div><div class="font-b" style="font-size:24px;color:var(--ios-blue)">${stats.totalBudget} $</div></div></div>`;
-        html += `<div class="card col"><div class="p-16"><div class="text-s" style="font-size:13px">Потрачено</div><div class="font-b" style="font-size:24px;color:var(--ios-green)">${stats.totalSpent} $</div></div></div>`;
+        html += '<div style="display:flex;gap:12px;padding:0 16px;margin-bottom:20px">';
+        html += '<div class="card" style="flex:1;margin:0"><div style="padding:16px"><div style="color:var(--ios-label2);font-size:13px;margin-bottom:4px">\u0411\u044e\u0434\u0436\u0435\u0442</div><div style="font-size:24px;font-weight:700;color:var(--ios-blue)">' + stats.totalBudget + ' $</div></div></div>';
+        html += '<div class="card" style="flex:1;margin:0"><div style="padding:16px"><div style="color:var(--ios-label2);font-size:13px;margin-bottom:4px">\u041f\u043e\u0442\u0440\u0430\u0447\u0435\u043d\u043e</div><div style="font-size:24px;font-weight:700;color:var(--ios-green)">' + stats.totalSpent + ' $</div></div></div>';
         html += '</div>';
         
-        html += '<div class="card mb-20"><div class="p-16">';
+        html += '<div class="card" style="margin-bottom:20px"><div style="padding:16px">';
         html += '<div style="display:flex;justify-content:space-between;margin-bottom:12px">';
-        html += `<div><div class="text-s" style="font-size:13px">Общий бюджет</div><div class="font-b" style="font-size:20px">${stats.totalBudget} $</div></div>`;
-        html += `<div style="text-align:right"><div class="text-s" style="font-size:13px">Осталось</div><div class="font-b" style="font-size:20px;color:${stats.remaining >= 0 ? 'var(--ios-green)' : 'var(--ios-red)'}">${stats.remaining} $</div></div>`;
+        html += '<div><div style="color:var(--ios-label2);font-size:13px">\u041e\u0431\u0449\u0438\u0439 \u0431\u044e\u0434\u0436\u0435\u0442</div><div style="font-size:20px;font-weight:700">' + stats.totalBudget + ' $</div></div>';
+        html += '<div style="text-align:right"><div style="color:var(--ios-label2);font-size:13px">\u041e\u0441\u0442\u0430\u043b\u043e\u0441\u044c</div><div style="font-size:20px;font-weight:700;color:' + (stats.remaining >= 0 ? '#34C759' : '#FF3B30') + '">' + stats.remaining + ' $</div></div>';
         html += '</div>';
-        html += `<div class="progress"><div class="progress-f" style="width:${stats.totalBudget > 0 ? Math.min((stats.totalSpent/stats.totalBudget)*100,100) : 0}%;background:${stats.remaining >= 0 ? 'var(--ios-green)' : 'var(--ios-red)'}"></div></div>`;
+        html += '<div class="progress"><div class="progress-f" style="width:' + (stats.totalBudget > 0 ? Math.min((stats.totalSpent / stats.totalBudget) * 100, 100) : 0) + '%;background:' + (stats.remaining >= 0 ? '#34C759' : '#FF3B30') + '"></div></div>';
         html += '</div></div>';
         
-        html += '<div class="card mb-20">';
-        html += `<div class="card-r"><span style="font-size:20px">👥</span><div class="card-c"><div class="card-t">Людей</div></div><div class="text-s">${stats.people}</div></div>`;
-        html += `<div class="card-r"><span style="font-size:20px">🎁</span><div class="card-c"><div class="card-t">Событий</div></div><div class="text-s">${stats.events}</div></div>`;
-        html += `<div class="card-r"><span style="font-size:20px">🎌</span><div class="card-c"><div class="card-t">Подарков</div></div><div class="text-s">${stats.gifts}</div></div>`;
+        html += '<div class="card" style="margin-bottom:20px">';
+        html += '<div class="card-r"><span style="font-size:20px">\ud83d\udc65</span><div class="card-c"><div class="card-t">\u041b\u044e\u0434\u0435\u0439</div></div><div style="color:var(--ios-label2)">' + stats.people + '</div></div>';
+        html += '<div class="card-r"><span style="font-size:20px">\ud83c\udf81</span><div class="card-c"><div class="card-t">\u0421\u043e\u0431\u044b\u0442\u0438\u0439</div></div><div style="color:var(--ios-label2)">' + stats.events + '</div></div>';
+        html += '<div class="card-r"><span style="font-size:20px">\ud83c\udf8c</span><div class="card-c"><div class="card-t">\u041f\u043e\u0434\u0430\u0440\u043a\u043e\u0432</div></div><div style="color:var(--ios-label2)">' + stats.gifts + '</div></div>';
         html += '</div>';
         
-        html += '<div><div class="font-sb" style="font-size:20px;margin-bottom:12px">💡 Советы</div>';
-        html += '<div class="card mb-12"><div class="card-r"><span style="font-size:24px">📅</span><div class="card-c"><div class="card-t">Планируйте заранее</div><div class="card-s">Покупайте подарки заранее</div></div></div></div>';
-        html += '<div class="card"><div class="card-r"><span style="font-size:24px">💰</span><div class="card-c"><div class="card-t">Следите за бюджетом</div><div class="card-s">Устанавливайте лимит на каждое событие</div></div></div></div>';
+        html += '<div><div style="font-size:20px;font-weight:600;margin-bottom:12px">\ud83d\udca1 \u0421\u043e\u0432\u0435\u0442\u044b</div>';
+        html += '<div class="card" style="margin-bottom:12px"><div class="card-r"><span style="font-size:24px">\ud83d\udcc5</span><div class="card-c"><div class="card-t">\u041f\u043b\u0430\u043d\u0438\u0440\u0443\u0439\u0442\u0435 \u0437\u0430\u0440\u0430\u043d\u0435\u0435</div><div class="card-s">\u041f\u043e\u043a\u0443\u043f\u0430\u0439\u0442\u0435 \u043f\u043e\u0434\u0430\u0440\u043a\u0438 \u0437\u0430\u0440\u0430\u043d\u0435\u0435</div></div></div></div>';
+        html += '<div class="card"><div class="card-r"><span style="font-size:24px">\ud83d\udcb0</span><div class="card-c"><div class="card-t">\u0421\u043b\u0435\u0434\u0438\u0442\u0435 \u0437\u0430 \u0431\u044e\u0434\u0436\u0435\u0442\u043e\u043c</div><div class="card-s">\u0423\u0441\u0442\u0430\u043d\u0430\u0432\u043b\u0438\u0432\u0430\u0439\u0442\u0435 \u043b\u0438\u043c\u0438\u0442 \u043d\u0430 \u043a\u0430\u0436\u0434\u043e\u0435 \u0441\u043e\u0431\u044b\u0442\u0438\u0435</div></div></div></div>';
         html += '</div>';
         
         html += '</div></div>';
@@ -407,27 +416,27 @@
     };
 
     window.renderAddPerson = function() {
-        let html = '<div class="content"><div class="p-20">';
-        html += '<div class="font-b" style="font-size:28px;margin-bottom:20px">Новый человек</div>';
+        var html = '<div class="content"><div style="padding:20px 16px">';
+        html += '<div style="font-size:28px;font-weight:700;margin-bottom:20px">\u041d\u043e\u0432\u044b\u0439 \u0447\u0435\u043b\u043e\u0432\u0435\u043a</div>';
         
         html += '<div class="form">';
-        html += '<div class="form-r"><label class="form-l">Имя</label><input class="form-in" id="p-name" placeholder="Введите имя"></div>';
-        html += '<div class="form-r"><label class="form-l">День Р</label><input class="form-in" id="p-bday" type="date" style="text-align:right"></div>';
-        html += '<div class="form-r"><label class="form-l">Отношения</label><input class="form-in" id="p-rel" placeholder="Друг, родственник"></div>';
+        html += '<div class="form-r"><label class="form-l">\u0418\u043c\u044f</label><input class="form-in" id="p-name" placeholder="\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0438\u043c\u044f"></div>';
+        html += '<div class="form-r"><label class="form-l">\u0414\u0435\u043d\u044c \u0420</label><input class="form-in" id="p-bday" type="date" style="text-align:right"></div>';
+        html += '<div class="form-r"><label class="form-l">\u041e\u0442\u043d\u043e\u0448\u0435\u043d\u0438\u044f</label><input class="form-in" id="p-rel" placeholder="\u0414\u0440\u0443\u0433, \u0440\u043e\u0434\u0441\u0442\u0432\u0435\u043d\u043d\u0438\u043a"></div>';
         html += '</div>';
         
-        html += '<div class="form"><div class="form-r" style="align-items:flex-start"><label class="form-l" style="padding-top:12px">Заметки</label><textarea class="form-in" id="p-notes" rows="3" style="text-align:left;resize:none"></textarea></div></div>';
+        html += '<div class="form"><div class="form-r" style="align-items:flex-start"><label class="form-l" style="padding-top:12px">\u0417\u0430\u043c\u0435\u0442\u043a\u0438</label><textarea class="form-in" id="p-notes" rows="3" style="text-align:left;resize:none"></textarea></div></div>';
         
-        html += '<button class="btn" style="margin-top:20px" onclick="savePerson()">Сохранить</button>';
+        html += '<button class="btn" style="margin-top:20px" onclick="savePerson()">\u0421\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c</button>';
         html += '</div></div>';
         document.getElementById('content').innerHTML = html;
     };
 
     window.savePerson = function() {
-        const name = document.getElementById('p-name').value;
-        if (!name) { alert('Введите имя'); return; }
+        var name = document.getElementById('p-name').value;
+        if (!name) { alert('\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0438\u043c\u044f'); return; }
         store.addPerson({
-            name,
+            name: name,
             birthday: document.getElementById('p-bday').value,
             relationship: document.getElementById('p-rel').value,
             notes: document.getElementById('p-notes').value
@@ -436,28 +445,28 @@
     };
 
     window.renderAddEvent = function() {
-        let html = '<div class="content"><div class="p-20">';
-        html += '<div class="font-b" style="font-size:28px;margin-bottom:20px">Новое событие</div>';
+        var html = '<div class="content"><div style="padding:20px 16px">';
+        html += '<div style="font-size:28px;font-weight:700;margin-bottom:20px">\u041d\u043e\u0432\u043e\u0435 \u0441\u043e\u0431\u044b\u0442\u0438\u0435</div>';
         
         html += '<div class="form">';
-        html += '<div class="form-r"><label class="form-l">Название</label><input class="form-in" id="e-title" placeholder="День рождения..."></div>';
-        html += '<div class="form-r"><label class="form-l">Дата</label><input class="form-in" id="e-date" type="date" style="text-align:right"></div>';
-        html += '<div class="form-r"><label class="form-l">Тип</label><select class="form-in" id="e-type" style="text-align:right;border:none;background:none"><option value="birthday">День рождения</option><option value="anniversary">Годовщина</option><option value="holiday">Праздник</option><option value="other">Другое</option></select></div>';
-        html += '<div class="form-r"><label class="form-l">Бюджет ($)</label><input class="form-in" id="e-budget" type="number" placeholder="0" style="text-align:right"></div>';
+        html += '<div class="form-r"><label class="form-l">\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435</label><input class="form-in" id="e-title" placeholder="\u0414\u0435\u043d\u044c \u0440\u043e\u0436\u0434\u0435\u043d\u0438\u044f..."></div>';
+        html += '<div class="form-r"><label class="form-l">\u0414\u0430\u0442\u0430</label><input class="form-in" id="e-date" type="date" style="text-align:right"></div>';
+        html += '<div class="form-r"><label class="form-l">\u0422\u0438\u043f</label><select class="form-in" id="e-type" style="text-align:right;border:none;background:none"><option value="birthday">\u0414\u0435\u043d\u044c \u0440\u043e\u0436\u0434\u0435\u043d\u0438\u044f</option><option value="anniversary">\u0413\u043e\u0434\u043e\u0432\u0449\u0438\u043d\u0430</option><option value="holiday">\u041f\u0440\u0430\u0437\u0434\u043d\u0438\u043a</option><option value="other">\u0414\u0440\u0443\u0433\u043e\u0435</option></select></div>';
+        html += '<div class="form-r"><label class="form-l">\u0411\u044e\u0434\u0436\u0435\u0442 ($)</label><input class="form-in" id="e-budget" type="number" placeholder="0" style="text-align:right"></div>';
         html += '</div>';
         
-        html += '<button class="btn" style="margin-top:20px" onclick="saveEvent()">Сохранить</button>';
+        html += '<button class="btn" style="margin-top:20px" onclick="saveEvent()">\u0421\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c</button>';
         html += '</div></div>';
         document.getElementById('content').innerHTML = html;
     };
 
     window.saveEvent = function() {
-        const title = document.getElementById('e-title').value;
-        const date = document.getElementById('e-date').value;
-        if (!title || !date) { alert('Заполните название и дату'); return; }
+        var title = document.getElementById('e-title').value;
+        var date = document.getElementById('e-date').value;
+        if (!title || !date) { alert('\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u0435 \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u0435 \u0438 \u0434\u0430\u0442\u0443'); return; }
         store.addEvent({
-            title,
-            date,
+            title: title,
+            date: date,
             type: document.getElementById('e-type').value,
             budget: parseFloat(document.getElementById('e-budget').value) || 0
         });
@@ -465,10 +474,10 @@
     };
 
     window.showAddGift = function(eventId) {
-        const name = prompt('Название подарка:');
+        var name = prompt('\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435 \u043f\u043e\u0434\u0430\u0440\u043a\u0430:');
         if (!name) return;
-        const price = parseFloat(prompt('Цена ($):') || 0);
-        store.addGift({name, price, status: 'planned', eventId});
+        var price = parseFloat(prompt('\u0426\u0435\u043d\u0430 ($):') || 0);
+        store.addGift({name: name, price: price, status: 'planned', eventId: eventId});
         renderEventDetail(eventId);
     };
 

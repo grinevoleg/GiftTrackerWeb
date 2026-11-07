@@ -3,16 +3,16 @@
     'use strict';
 
     // Data Store
-    const store = {
+    var store = {
         people: [],
         events: [],
         gifts: [],
         
-        load() {
+        load: function() {
             try {
-                const data = localStorage.getItem('gifttracker');
+                var data = localStorage.getItem('gifttracker');
                 if (data) {
-                    const parsed = JSON.parse(data);
+                    var parsed = JSON.parse(data);
                     this.people = parsed.people || [];
                     this.events = parsed.events || [];
                     this.gifts = parsed.gifts || [];
@@ -24,7 +24,7 @@
             }
         },
         
-        save() {
+        save: function() {
             localStorage.setItem('gifttracker', JSON.stringify({
                 people: this.people,
                 events: this.events,
@@ -32,7 +32,7 @@
             }));
         },
         
-        loadDemo() {
+        loadDemo: function() {
             this.people = [
                 {id: '1', name: '\u041c\u0430\u043c\u0430', birthday: '1975-03-15', relationship: '\u0420\u043e\u0434\u0441\u0442\u0432\u0435\u043d\u043d\u0438\u043a', notes: '\u041b\u044e\u0431\u0438\u0442 \u0446\u0432\u0435\u0442\u044b'},
                 {id: '2', name: '\u041f\u0430\u043f\u0430', birthday: '1970-07-22', relationship: '\u0420\u043e\u0434\u0441\u0442\u0432\u0435\u043d\u043d\u0438\u043a', notes: '\u0423\u0432\u043b\u0435\u043a\u0430\u0435\u0442\u0441\u044f \u0440\u044b\u0431\u0430\u043b\u043a\u043e\u0439'},
@@ -51,69 +51,108 @@
             this.save();
         },
         
-        addPerson(p) {
+        addPerson: function(p) {
             p.id = Date.now().toString();
             this.people.push(p);
             this.save();
         },
         
-        addEvent(e) {
+        addEvent: function(e) {
             e.id = Date.now().toString();
             this.events.push(e);
             this.save();
         },
         
-        addGift(g) {
+        addGift: function(g) {
             g.id = Date.now().toString();
             this.gifts.push(g);
             this.save();
         },
         
-        getUpcomingBirthdays(days = 30) {
-            const now = new Date();
-            return this.people.filter(p => p.birthday).map(p => {
-                const bday = new Date(p.birthday);
-                const next = new Date(now.getFullYear(), bday.getMonth(), bday.getDate());
+        getUpcomingBirthdays: function(days) {
+            days = days || 30;
+            var now = new Date();
+            var result = [];
+            for (var i = 0; i < this.people.length; i++) {
+                var p = this.people[i];
+                if (!p.birthday) continue;
+                var bday = new Date(p.birthday);
+                var next = new Date(now.getFullYear(), bday.getMonth(), bday.getDate());
                 if (next < now) next.setFullYear(now.getFullYear() + 1);
-                const diff = Math.ceil((next - now) / (1000 * 60 * 60 * 24));
-                return Object.assign({}, p, {daysUntil: diff});
-            }).filter(p => p.daysUntil >= 0 && p.daysUntil <= days).sort((a, b) => a.daysUntil - b.daysUntil);
+                var diff = Math.ceil((next - now) / (1000 * 60 * 60 * 24));
+                if (diff >= 0 && diff <= days) {
+                    var copy = {};
+                    for (var key in p) copy[key] = p[key];
+                    copy.daysUntil = diff;
+                    result.push(copy);
+                }
+            }
+            result.sort(function(a, b) { return a.daysUntil - b.daysUntil; });
+            return result;
         },
         
-        getUpcomingEvents(days = 30) {
-            const now = new Date();
-            return this.events.map(e => {
-                const d = new Date(e.date);
-                const diff = Math.ceil((d - now) / (1000 * 60 * 60 * 24));
-                return Object.assign({}, e, {daysUntil: diff});
-            }).filter(e => e.daysUntil >= 0 && e.daysUntil <= days).sort((a, b) => a.daysUntil - b.daysUntil);
+        getUpcomingEvents: function(days) {
+            days = days || 30;
+            var now = new Date();
+            var result = [];
+            for (var i = 0; i < this.events.length; i++) {
+                var e = this.events[i];
+                var d = new Date(e.date);
+                var diff = Math.ceil((d - now) / (1000 * 60 * 60 * 24));
+                if (diff >= 0 && diff <= days) {
+                    var copy = {};
+                    for (var key in e) copy[key] = e[key];
+                    copy.daysUntil = diff;
+                    result.push(copy);
+                }
+            }
+            result.sort(function(a, b) { return a.daysUntil - b.daysUntil; });
+            return result;
         },
         
-        getGiftsForEvent(eventId) {
-            return this.gifts.filter(g => g.eventId === eventId);
+        getGiftsForEvent: function(eventId) {
+            var result = [];
+            for (var i = 0; i < this.gifts.length; i++) {
+                if (this.gifts[i].eventId === eventId) result.push(this.gifts[i]);
+            }
+            return result;
         },
         
-        getStats() {
-            const totalBudget = this.events.reduce((s, e) => s + (parseFloat(e.budget) || 0), 0);
-            const totalSpent = this.gifts.reduce((s, g) => s + (parseFloat(g.price) || 0), 0);
-            return {totalBudget, totalSpent, remaining: totalBudget - totalSpent, people: this.people.length, events: this.events.length, gifts: this.gifts.length};
+        getStats: function() {
+            var totalBudget = 0;
+            for (var i = 0; i < this.events.length; i++) {
+                totalBudget += parseFloat(this.events[i].budget) || 0;
+            }
+            var totalSpent = 0;
+            for (var i = 0; i < this.gifts.length; i++) {
+                totalSpent += parseFloat(this.gifts[i].price) || 0;
+            }
+            return {
+                totalBudget: totalBudget,
+                totalSpent: totalSpent,
+                remaining: totalBudget - totalSpent,
+                people: this.people.length,
+                events: this.events.length,
+                gifts: this.gifts.length
+            };
         }
     };
 
     // Icons and colors
-    const icons = {birthday: '\ud83c\udf82', anniversary: '\u2764\ufe0f', holiday: '\u2b50', other: '\ud83c\udf81'};
-    const colors = {birthday: '#FF4D80', anniversary: '#FF3B30', holiday: '#FF9500', other: '#007AFF'};
+    var icons = {birthday: '\ud83c\udf82', anniversary: '\u2764\ufe0f', holiday: '\u2b50', other: '\ud83c\udf81'};
+    var colors = {birthday: '#FF4D80', anniversary: '#FF3B30', holiday: '#FF9500', other: '#007AFF'};
 
     // Current state
-    let currentTab = 'dashboard';
+    var currentTab = 'dashboard';
 
     // Initialize on load
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('GiftTracker initializing...');
+    function init() {
+        console.log('GiftTracker init started');
         store.load();
         
         // Hide splash after delay
         setTimeout(function() {
+            console.log('Hiding splash...');
             var splash = document.getElementById('splash');
             if (splash) {
                 splash.classList.add('hidden');
@@ -122,8 +161,16 @@
                 }, 500);
             }
             renderDashboard();
+            console.log('Dashboard rendered');
         }, 1500);
-    });
+    }
+
+    // Try multiple init methods
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
 
     // Tab switching
     window.switchTab = function(tab) {
@@ -258,7 +305,10 @@
     };
 
     window.renderPersonDetail = function(id) {
-        var p = store.people.find(function(x) { return x.id === id; });
+        var p = null;
+        for (var i = 0; i < store.people.length; i++) {
+            if (store.people[i].id === id) { p = store.people[i]; break; }
+        }
         if (!p) return renderPeople();
         
         var age = p.birthday ? new Date().getFullYear() - new Date(p.birthday).getFullYear() : null;
@@ -326,11 +376,17 @@
     };
 
     window.renderEventDetail = function(id) {
-        var e = store.events.find(function(x) { return x.id === id; });
+        var e = null;
+        for (var i = 0; i < store.events.length; i++) {
+            if (store.events[i].id === id) { e = store.events[i]; break; }
+        }
         if (!e) return renderEvents();
         
         var gifts = store.getGiftsForEvent(id);
-        var spent = gifts.reduce(function(s, g) { return s + (parseFloat(g.price) || 0); }, 0);
+        var spent = 0;
+        for (var i = 0; i < gifts.length; i++) {
+            spent += parseFloat(gifts[i].price) || 0;
+        }
         var remaining = (parseFloat(e.budget) || 0) - spent;
         
         var html = '<div class="content">';

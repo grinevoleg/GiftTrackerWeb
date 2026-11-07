@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#FF4D80">
+    <title>GiftTracker</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    <style>
+        :root{--ios-pink:#FF4D80;--ios-blue:#007AFF;--ios-green:#34C759;--ios-orange:#FF9500;--ios-red:#FF3B30;--ios-bg:#F2F2F7;--ios-card:#FFFFFF;--ios-label:#000000;--ios-label2:rgba(60,60,67,0.6);--ios-sep:rgba(60,60,67,0.29);--ios-fill:rgba(120,120,128,0.16)}
+        @media(prefers-color-scheme:dark){:root{--ios-bg:#000000;--ios-card:#1C1C1E;--ios-label:#FFFFFF;--ios-label2:rgba(235,235,245,0.6);--ios-sep:rgba(84,84,88,0.6);--ios-fill:rgba(120,120,128,0.24)}}
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+        html{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',Segoe UI,Roboto,sans-serif;font-size:17px;-webkit-font-smoothing:antialiased}
+        body{background:var(--ios-bg);color:var(--ios-label);overflow:hidden;height:100vh;width:100vw}
+        #app{height:100vh;width:100vw;overflow:hidden;position:relative}
+        .splash{position:fixed;inset:0;background:linear-gradient(135deg,#FF4D80 0%,#E63975 100%);display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s}
+        .splash.hidden{opacity:0;visibility:hidden}
+        .splash-c{text-align:center;color:#fff}
+        .splash-i{font-size:80px;margin-bottom:20px;animation:bounce 2s ease infinite}
+        .splash-t{font-size:32px;font-weight:700;margin-bottom:8px}
+        .splash-s{font-size:17px;opacity:.9;margin-bottom:40px}
+        @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+        .tabbar{position:fixed;bottom:0;left:0;right:0;height:calc(env(safe-area-inset-bottom,34px) + 49px);padding-bottom:env(safe-area-inset-bottom,34px);background:rgba(255,255,255,0.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:0.5px solid var(--ios-sep);z-index:100;display:flex;justify-content:space-around;align-items:center}
+        @media(prefers-color-scheme:dark){.tabbar{background:rgba(28,28,30,0.9)}}
+        .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px 0;background:none;border:none;cursor:pointer;color:var(--ios-label2);transition:color .2s;font-size:10px}
+        .tab.active{color:var(--ios-pink)}
+        .tab span{font-size:24px;line-height:1}
+        .content{position:fixed;top:0;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,34px) + 49px);overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--ios-bg)}
+        .content::-webkit-scrollbar{display:none}
+        .card{background:var(--ios-card);border-radius:12px;margin:0 16px 12px;overflow:hidden}
+        .card-r{display:flex;align-items:center;padding:12px 16px;gap:12px;border-bottom:0.5px solid var(--ios-sep)}
+        .card-r:last-child{border-bottom:none}
+        .card-i{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px}
+        .card-c{flex:1;min-width:0}
+        .card-t{font-size:17px;font-weight:400;color:var(--ios-label);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .card-s{font-size:15px;color:var(--ios-label2);margin-top:2px}
+        .badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:9999px;font-size:13px;font-weight:600;background:var(--ios-pink);color:#fff}
+        .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border-radius:9999px;font-size:17px;font-weight:600;border:none;cursor:pointer;background:var(--ios-pink);color:#fff;width:calc(100% - 32px);margin:0 16px}
+        .btn2{background:var(--ios-fill);color:var(--ios-blue);flex:1;margin:0}
+        .search{padding:8px 16px;background:var(--ios-bg)}
+        .search-i{display:flex;align-items:center;gap:8px;background:var(--ios-fill);border-radius:9999px;padding:8px 12px}
+        .search-i input{flex:1;border:none;background:none;font-size:17px;color:var(--ios-label);outline:none}
+        .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 32px;text-align:center}
+        .empty-i{font-size:64px;margin-bottom:16px;opacity:.5}
+        .empty-t{font-size:20px;font-weight:600;margin-bottom:8px}
+        .empty-s{color:var(--ios-label2)}
+        .form{background:var(--ios-card);border-radius:12px;margin:0 16px 20px;overflow:hidden}
+        .form-r{display:flex;align-items:center;padding:12px 16px;gap:12px;border-bottom:0.5px solid var(--ios-sep)}
+        .form-r:last-child{border-bottom:none}
+        .form-l{font-size:17px;color:var(--ios-label);min-width:100px}
+        .form-in{flex:1;border:none;background:none;font-size:17px;color:var(--ios-label);outline:none;text-align:right}
+        .progress{height:6px;background:var(--ios-fill);border-radius:3px;overflow:hidden}
+        .progress-f{height:100%;border-radius:3px;background:var(--ios-green);transition:width .3s}
+        .row{display:flex;gap:12px;padding:0 16px}
+        .col{flex:1}
+        .p-16{padding:16px}
+        .p-20{padding:20px 16px}
+        .mb-12{margin-bottom:12px}
+        .mb-20{margin-bottom:20px}
+        .text-c{text-align:center}
+        .text-s{color:var(--ios-label2)}
+        .font-b{font-weight:700}
+        .font-sb{font-weight:600}
+        .hidden{display:none!important}
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div id="splash" class="splash">
+            <div class="splash-c">
+                <div class="splash-i">🎁</div>
+                <div class="splash-t">GiftTracker</div>
+                <div class="splash-s">Никогда не забывайте о подарках</div>
+            </div>
+        </div>
+        <div id="content" class="content"></div>
+        <div class="tabbar">
+            <button class="tab active" onclick="switchTab('dashboard')">
+                <span>🏠</span>
+                <span>Главная</span>
+            </button>
+            <button class="tab" onclick="switchTab('people')">
+                <span>👥</span>
+                <span>Люди</span>
+            </button>
+            <button class="tab" onclick="switchTab('events')">
+                <span>🎁</span>
+                <span>События</span>
+            </button>
+            <button class="tab" onclick="switchTab('stats')">
+                <span>📊</span>
+                <span>Статистика</span>
+            </button>
+        </div>
+    </div>
+    <script src="/app.js"></script>
+</body>
+</html>
